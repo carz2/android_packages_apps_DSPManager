@@ -40,21 +40,21 @@ public class WM8994 extends PreferenceFragment {
     protected static final String TAG = WM8994.class.getSimpleName();
 
     public static final String WM8994_CONFIG = "wm8994";
-    public static final String WM8994_ENABLE_FILE = "/sys/class/misc/wm8994_sound_control/enable";
+    public static final String WM8994_ENABLE_FILE = "/sys/class/misc/voodoo_sound_control/enable";
 
     public static final String aOptionControl[][] = {
-        {"/sys/class/misc/wm8994_sound_control/enable","pref_wm8994_control_enable"},
-        {"/sys/class/misc/wm8994_sound/speaker_tuning","pref_wm8994_speaker_tuning"},
-        {"/sys/class/misc/wm8994_sound/mono_downmix","pref_wm8994_mono_downmix"},
-        {"/sys/class/misc/wm8994_sound/stereo_expansion","pref_wm8994_stereo_expansion"},
-        {"/sys/class/misc/wm8994_sound/dac_direct","pref_wm8994_dac_direct"},
-        {"/sys/class/misc/wm8994_sound/dac_osr128","pref_wm8994_dac_osr128"},
-        {"/sys/class/misc/wm8994_sound/adc_osr128","pref_wm8994_adc_osr128"},
-        {"/sys/class/misc/wm8994_sound/fll_tuning","pref_wm8994_fll_tuning"}
+        {"/sys/class/misc/voodoo_sound_control/enable","pref_wm8994_control_enable"},
+        {"/sys/class/misc/voodoo_sound/speaker_tuning","pref_wm8994_speaker_tuning"},
+        {"/sys/class/misc/voodoo_sound/mono_downmix","pref_wm8994_mono_downmix"},
+        {"/sys/class/misc/voodoo_sound/stereo_expansion","pref_wm8994_stereo_expansion"},
+        {"/sys/class/misc/voodoo_sound/dac_direct","pref_wm8994_dac_direct"},
+        {"/sys/class/misc/voodoo_sound/dac_osr128","pref_wm8994_dac_osr128"},
+        {"/sys/class/misc/voodoo_sound/adc_osr128","pref_wm8994_adc_osr128"},
+        {"/sys/class/misc/voodoo_sound/fll_tuning","pref_wm8994_fll_tuning"}
     };
 
     public static final String microphone_recording_preset[][] = {
-        {"/sys/class/misc/wm8994_sound/recording_preset","dsp.wm8994.microphone.recording"}
+        {"/sys/class/misc/voodoo_sound/recording_preset","dsp.wm8994.microphone.recording"}
     };
 
     public static final String BASS_BOOST_ENABLE_PREF = "dsp.wm8994.bassboost.enable";
@@ -70,11 +70,11 @@ public class WM8994 extends PreferenceFragment {
     public static final int MAX_VALUE_GAIN = 12;
     public static final int MAX_VALUE_RANGE = 5;
 
-    public static final String BASS_BOOST_ENABLE_FILE = "/sys/class/misc/wm8994_sound/headphone_eq";
+    public static final String BASS_BOOST_ENABLE_FILE = "/sys/class/misc/voodoo_sound/headphone_eq";
     public static final String[] BASS_BOOST_FILES = new String[] {
-        "/sys/class/misc/wm8994_sound/digital_gain"
-        ,"/sys/class/misc/wm8994_sound/headphone_eq_b1_gain"
-        ,"/sys/class/misc/wm8994_sound/headphone_eq_b2_gain"
+        "/sys/class/misc/voodoo_sound/digital_gain"
+        ,"/sys/class/misc/voodoo_sound/headphone_eq_b1_gain"
+        ,"/sys/class/misc/voodoo_sound/headphone_eq_b2_gain"
     };
 
     private static final Integer iTotalOptions = aOptionControl.length;

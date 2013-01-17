@@ -1,10 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="app_name">DSPManager</string>
-    <string name="select_configuration_title">Seleziona Configurazione Da modificare</string>
+<!-- Copyright 2012 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="select_configuration_title">Seleziona configurazione da modificare</string>
     <string name="headset_title">Cuffie</string>
-    <string name="speaker_title">Altoparlante Telefono</string>
-    <string name="bluetooth_title">Dispositivo Bluetooth</string>
+    <string name="speaker_title">Altoparlante telefono</string>
+    <string name="bluetooth_title">Dispositivo bluetooth</string>
+    <string name="audio_effects">Effetti audio</string>
+    <string name="pref_unavailable">Funzionalità non disponibile sul tuo dispositivo</string>
     <string name="dsp_settings_headset">Impostazioni DSP - Cuffie</string>
     <string name="dsp_settings_speaker">Impostazioni DSP - Altoparlante Telefono</string>
     <string name="dsp_settings_bluetooth">Impostazioni DSP - Dispositivo Bluetooth</string>

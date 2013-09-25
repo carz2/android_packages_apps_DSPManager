@@ -24,7 +24,7 @@
     <string name="pref_headset_virtual_summary_off">A simulação está desativada</string>
     <string name="pref_headset_virtual_enable">Ativar</string>
     <string name="pref_room_title">Selecione o ambiente</string>
-    <string name="dialog_room">Simulação de ambiente</string>
+    <string name="dialog_room">Simulação de Ambiente</string>
     <string name="menu_reset">Resetar</string>
     <string name="dsp_settings_headset">Configurações Equalizador - Fone de Ouvido</string>
     <string name="dsp_settings_speaker">Configurações Equalizador - Alto-falante</string>
@@ -87,7 +87,7 @@
     <string name="pref_wm8994_fll_tuning_title">Tempo do audio sintonizado</string>
     <string name="pref_wm8994_fll_tuning_summary">Usar fonte de tempo de audio WM8994 sintonizado &#8212; melhora qualidade do som</string>
     <string name="dsp_settings_wm8994">Configurações DSP - WM8994</string>
-    <string name="help_title">Guia de usuário</string>
+    <string name="help_title">Ajuda</string>
     <string name="help_text"><b>O que é o Equalizador??</b>
 \n
 \nEqualizador é uma aplicação para ajuste de áudio por canal. <i>Equalizador</i>
@@ -98,8 +98,8 @@ de música.
 \n
 \n<b>Filosofia</b>
 \n
-\nO processamento de aúdio do CyanogenMod suporta três diferentes cantegorias de
-saídas: fone de ouvido com fio, alto-falante do telefone e fone bluetooth. Existe
+\nO processamento de aúdio do CyanogenMod suporta quatro diferentes cantegorias de
+saídas: fone de ouvido com fio, áudio USB, alto-falante do telefone e fone bluetooth. Existe
 um painel de configuração separado para cada categoria de saída. A filosofia do
 Equalizador é para corrigir cada saída de áudio das deficiências para conseguir a
 maior eficiência para ouvir som de cada saída.
@@ -175,4 +175,6 @@ ativado quando usando fones de ouvido estéreo.
 reverbação Haas, que pode ser usado aumentar a largura de imagem estéreo percebida.
 Isto é controlado pelo controle &#8220;Simulação de Ambiente&#8221;.
     </string>
+    <string name="usb_title">USB/Dock</string>
+    <string name="dsp_settings_usb">Configurações Equalizador - Dispositivo USB</string>
 </resources>

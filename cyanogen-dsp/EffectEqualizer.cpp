@@ -21,6 +21,47 @@
 
 #include <math.h>
 
+#define NUM_BANDS 6
+
+/*      EQ presets      */
+static int16_t gPresetAcoustic[NUM_BANDS] = { 450, 450, 350, 175, 350, 250 };
+static int16_t gPresetBassBooster[NUM_BANDS] = { 650, 650, 400, 0, 0, 0 };
+static int16_t gPresetBassReducer[NUM_BANDS] = { -650, -650, -400, 0, 0, 0 };
+static int16_t gPresetClassical[NUM_BANDS] = { 400, 400, 325, -50, 200, 350 };
+static int16_t gPresetDeep[NUM_BANDS] = { 400, 400, 50, 150, -400, -450 };
+static int16_t gPresetFlat[NUM_BANDS] = { 0, 0, 0, 0, 0, 0 };
+static int16_t gPresetRnB[NUM_BANDS] = { 550, 550, 350, -175, 150, 250 };
+static int16_t gPresetRock[NUM_BANDS] = { 450, 450, 275, -50, 275, 400 };
+static int16_t gPresetSmallSpeakers[NUM_BANDS] = { 650, 650, 400, 0, -650, -400 };
+static int16_t gPresetTrebleBooster[NUM_BANDS] = { 0, 0, 0, 0, 400, 650 };
+static int16_t gPresetTrebleReducer[NUM_BANDS] = { 0, 0, 0, 0, -650, -400 };
+static int16_t gPresetVocalBooster[NUM_BANDS] = { -250, -250, 0, 350, 150, -200 };
+
+struct sPresetConfig {
+    const char * name;
+    const int16_t * bandConfigs;
+};
+
+static const sPresetConfig gEqualizerPresets[] = {
+    { "Acoustic",       gPresetAcoustic      },
+    { "Bass Booster",   gPresetBassBooster   },
+    { "Bass Reducer",   gPresetBassReducer   },
+    { "Classical",      gPresetClassical     },
+    { "Deep",           gPresetDeep          },
+    { "Flat",           gPresetFlat          },
+    { "R&B",            gPresetRnB           },
+    { "Rock",           gPresetRock          },
+    { "Small Speakers", gPresetSmallSpeakers },
+    { "Treble Booster", gPresetTrebleBooster },
+    { "Treble Reducer", gPresetTrebleReducer },
+    { "Vocal Booster",  gPresetVocalBooster  }
+};
+
+static const int16_t gNumPresets = sizeof(gEqualizerPresets)/sizeof(sPresetConfig);
+static int16_t mCurPreset = 0;
+
+/*      End of EQ presets      */
+
 typedef struct {
     int32_t status;
     uint32_t psize;
@@ -55,6 +96,24 @@ typedef struct {
     int32_t arg;
     int32_t data;
 } reply2x4_1x4_t;
+
+typedef struct {
+    int32_t status;
+    uint32_t psize;
+    uint32_t vsize;
+    int32_t cmd;
+    int32_t arg;
+    int32_t data1;
+    int32_t data2;
+} reply2x4_2x4_t;
+
+typedef struct {
+    int32_t status;
+    uint32_t psize;
+    uint32_t vsize;
+    int32_t cmd;
+    int16_t data[8]; // numbands (6) + 2
+} reply1x4_props_t;
 
 static int64_t toFixedPoint(float in) {
     return (int64_t) (0.5 + in * ((int64_t) 1 << 32));
@@ -96,7 +155,7 @@ int32_t EffectEqualizer::command(uint32_t cmdCode, uint32_t cmdSize, void* pCmdD
                 reply1x4_1x2_t *replyData = (reply1x4_1x2_t *) pReplyData;
                 replyData->status = 0;
                 replyData->vsize = 2;
-                replyData->data = 6;
+                replyData->data = NUM_BANDS;
                 *replySize = sizeof(reply1x4_1x2_t);
                 return 0;
             }
@@ -113,14 +172,34 @@ int32_t EffectEqualizer::command(uint32_t cmdCode, uint32_t cmdSize, void* pCmdD
                 reply1x4_1x2_t *replyData = (reply1x4_1x2_t *) pReplyData;
                 replyData->status = 0;
                 replyData->vsize = 2;
-                replyData->data = 0;
+                replyData->data = gNumPresets;
+                *replySize = sizeof(reply1x4_1x2_t);
+                return 0;
+            }
+            if (cmd == EQ_PARAM_PROPERTIES) {
+                reply1x4_props_t *replyData = (reply1x4_props_t *) pReplyData;
+                replyData->status = 0;
+                replyData->vsize = 2*8;
+                replyData->data[0] = (int16_t)-1; // PRESET_CUSTOM
+                replyData->data[1] = (int16_t)6;  // number of bands
+                for (int i = 0; i < NUM_BANDS; i++) {
+                    replyData->data[2 + i] = (int16_t)(mBand[i] * 100 + 0.5f); // band levels
+                }
+                *replySize = sizeof(reply1x4_props_t);
+                return 0;
+            }
+            if (cmd == EQ_PARAM_CUR_PRESET) {
+                reply1x4_1x2_t *replyData = (reply1x4_1x2_t *) pReplyData;
+                replyData->status = 0;
+                replyData->vsize = 2;
+                replyData->data = mCurPreset;
                 *replySize = sizeof(reply1x4_1x2_t);
                 return 0;
             }
         } else if (cep->psize == 8) {
             int32_t cmd = ((int32_t *) cep)[3];
             int32_t arg = ((int32_t *) cep)[4];
-            if (cmd == EQ_PARAM_BAND_LEVEL && arg >= 0 && arg < 6) {
+            if (cmd == EQ_PARAM_BAND_LEVEL && arg >= 0 && arg < NUM_BANDS) {
                 reply2x4_1x2_t *replyData = (reply2x4_1x2_t *) pReplyData;
                 replyData->status = 0;
                 replyData->vsize = 2;
@@ -128,7 +207,7 @@ int32_t EffectEqualizer::command(uint32_t cmdCode, uint32_t cmdSize, void* pCmdD
                 *replySize = sizeof(reply2x4_1x2_t);
                 return 0;
             }
-            if (cmd == EQ_PARAM_CENTER_FREQ && arg >= 0 && arg < 6) {
+            if (cmd == EQ_PARAM_CENTER_FREQ && arg >= 0 && arg < NUM_BANDS) {
                 float centerFrequency = 15.625f * powf(4, arg);
                 reply2x4_1x4_t *replyData = (reply2x4_1x4_t *) pReplyData;
                 replyData->status = 0;
@@ -137,10 +216,46 @@ int32_t EffectEqualizer::command(uint32_t cmdCode, uint32_t cmdSize, void* pCmdD
                 *replySize = sizeof(reply2x4_1x4_t);
                 return 0;
             }
+            if (cmd == EQ_PARAM_GET_BAND) {
+                float band = log(float(arg / 1000) / 15.625f) / log(4);
+                reply2x4_1x2_t *replyData = (reply2x4_1x2_t *) pReplyData;
+                replyData->status = 0;
+                replyData->vsize = 2;
+                replyData->data = int16_t(band);
+                *replySize = sizeof(reply2x4_1x2_t);
+                return 0;
+            }
+            if (cmd == EQ_PARAM_BAND_FREQ_RANGE && arg >= 0 && arg < NUM_BANDS) {
+                float centerFrequency = 15.625f * powf(4, arg);
+                float topFrequency = ((1.5f * 15.625f) * powf(4, arg));
+                float bottomFrequency = (centerFrequency - (topFrequency - centerFrequency));
+                reply2x4_2x4_t *replyData = (reply2x4_2x4_t *) pReplyData;
+                replyData->status = 0;
+                replyData->vsize = 8;
+                replyData->data1 = int32_t(bottomFrequency * 1000);
+                replyData->data2 = int32_t(topFrequency * 1000);
+                *replySize = sizeof(reply2x4_2x4_t);
+                return 0;
+            }
+            if (cmd == EQ_PARAM_GET_PRESET_NAME && arg >= 0 && arg < int32_t(gNumPresets)) {
+                effect_param_t *replyData = (effect_param_t *)pReplyData;
+                memcpy(pReplyData, pCmdData, sizeof(effect_param_t) + cep->psize);
+                size_t *pValueSize = &replyData->vsize;
+                int voffset = ((replyData->psize - 1) / sizeof(int32_t) + 1) * sizeof(int32_t);
+                void *pValue = replyData->data + voffset;
+
+                char *name = (char *)pValue;
+                strncpy(name, gEqualizerPresets[arg].name, *pValueSize - 1);
+                name[*pValueSize - 1] = 0;
+                *pValueSize = strlen(name) + 1;
+                *replySize = sizeof(effect_param_t) + voffset + replyData->vsize;
+                replyData->status = 0;
+                return 0;
+            }
         }
 
         /* Didn't support this command. We'll just set error status. */
-        ALOGE("Unknown GET_PARAM of size %d", cep->psize);
+        ALOGE("Unknown GET_PARAM of size %d (%d)", cep->psize, ((int32_t *) cep)[3]);
         effect_param_t *replyData = (effect_param_t *) pReplyData;
         replyData->status = -EINVAL;
         replyData->vsize = 0;
@@ -163,15 +278,57 @@ int32_t EffectEqualizer::command(uint32_t cmdCode, uint32_t cmdSize, void* pCmdD
             }
         }
 
+        if (cep->psize == 4 && cep->vsize == 2) {
+            int32_t cmd = ((int32_t *) cep)[3];
+            int32_t arg = ((int32_t *) cep)[4];
+
+            if (cmd == EQ_PARAM_CUR_PRESET && arg >= 0 && arg < gNumPresets) {
+                    sizeof(const int16_t *);
+                int16_t i = 0;
+                for (i = 0; i < NUM_BANDS; i++) {
+                    mBand[i] = gEqualizerPresets[arg].bandConfigs[i] / 100.0f;
+                }
+                ALOGI("Preset set to %d",arg);
+                mCurPreset = arg;
+                *replyData = 0;
+                refreshBands();
+                return 0;
+            } else {
+                ALOGI("Asking to set to %d",arg);
+            }
+        }
+
         if (cep->psize == 8 && cep->vsize == 2) {
             int32_t cmd = ((int32_t *) cep)[3];
             int32_t arg = ((int32_t *) cep)[4];
 
-            if (cmd == EQ_PARAM_BAND_LEVEL && arg >= 0 && arg < 6) {
+            if (cmd == EQ_PARAM_BAND_LEVEL && arg >= 0 && arg < NUM_BANDS) {
                 *replyData = 0;
                 int16_t value = ((int16_t *) cep)[10];
                 ALOGI("Setting band %d to %d", arg, value);
                 mBand[arg] = value / 100.0f;
+                return 0;
+            }
+        }
+
+        if (cep->psize == 4 && cep->vsize >= 4 && cep->vsize <= 16) {
+            int32_t cmd = ((int32_t *) cep)[3];
+            if (cmd == EQ_PARAM_PROPERTIES) {
+                *replyData = 0;
+                if ((((int16_t *) cep)[8]) >= 0) {
+                    *replyData = -EINVAL;
+                    ALOGE("Asking for non-existing preset ID");
+                    return 0;
+                }
+                if ((((int16_t *) cep)[9]) != NUM_BANDS) {
+                    *replyData = -EINVAL;
+                    ALOGE("Asking to manipulate invalid number of bands");
+                    return 0;
+                }
+                for (int i = 0; i < NUM_BANDS; i++) {
+                    mBand[i] = ((int16_t *) cep)[10 + i] / 100.0f;
+                }
+
                 return 0;
             }
         }
@@ -207,8 +364,8 @@ int32_t EffectEqualizer::command(uint32_t cmdCode, uint32_t cmdSize, void* pCmdD
  */
 float EffectEqualizer::getAdjustedBand(int32_t band, float loudness) {
     /* 1st derived by linear extrapolation from (62.5, 28) to (20, 41) */
-    const float adj_beg[6] = {  0.0,  0.0,  0.0,  0.0, -1.0, -1.5 };
-    const float adj_end[6] = { 42.3, 28.0, 10.0,  0.0, -3.0,  8.0 };
+    const float adj_beg[NUM_BANDS] = {  0.0,  0.0,  0.0,  0.0, -1.0, -1.5 };
+    const float adj_end[NUM_BANDS] = { 42.3, 28.0, 10.0,  0.0, -3.0,  8.0 };
 
     /* Add loudness adjustment */
     float loudnessLevel = loudness + mLoudnessAdjustment;
@@ -231,7 +388,7 @@ float EffectEqualizer::getAdjustedBand(int32_t band, float loudness) {
 
 void EffectEqualizer::refreshBands()
 {
-    for (int32_t band = 0; band < 5; band ++) {
+    for (int32_t band = 0; band < (NUM_BANDS - 1); band ++) {
         /* 15.625, 62.5, 250, 1000, 4000, 16000 */
         float centerFrequency = 15.625f * powf(4, band);
 
@@ -289,7 +446,7 @@ int32_t EffectEqualizer::process(audio_buffer_t *in, audio_buffer_t *out)
         mPowerSquaredR += int64_t(tmpR) * tmpR;
 
         /* Evaluate EQ filters */
-        for (int32_t j = 0; j < 5; j ++) {
+        for (int32_t j = 0; j < (NUM_BANDS - 1); j ++) {
             tmpL = mFilterL[j].process(tmpL);
             tmpR = mFilterR[j].process(tmpR);
         }

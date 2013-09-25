@@ -1,16 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_name">Menedżer DSP</string>
     <string name="select_configuration_title">Wybierz konfigurację do edycji</string>
     <string name="headset_title">Zestaw słuchawkowy</string>
     <string name="speaker_title">Głośnik</string>
     <string name="bluetooth_title">Urządzenie Bluetooth</string>
+    <string name="usb_title">USB/Stacja dokująca</string>
     <string name="audio_effects">Efekty dźwiękowe</string>
     <string name="pref_unavailable">Funkcjonalność niedostępna dla urządzenia</string>
     <string name="dsp_settings_headset">Ustawienia DSP - Zestaw słuchawkowy</string>
     <string name="dsp_settings_speaker">Ustawienia DSP - Głośnik</string>
     <string name="dsp_settings_bluetooth">Ustawienia DSP - Bluetooth</string>
-    <string name="pref_dsp_title">Kompresja dynamiki</string>
+    <string name="dsp_settings_usb">Ustawienia DSP - Urządzenie USB</string>
+    <string name="dsp_settings_wm8994">Ustawienia DSP - WM8994</string>
+    <string name="pref_dsp_title">Kompresja zakresu dynamiki</string>
     <string name="pref_dsp_summary_on">Kompresja jest włączona</string>
     <string name="pref_dsp_summary_off">Kompresja jest wyłączona</string>
     <string name="pref_dsp_enable">Włącz</string>
@@ -21,6 +25,7 @@
     <string name="pref_equalizer_summary_off">Equalizer jest nieaktywny</string>
     <string name="pref_equalizer_enable">Włącz</string>
     <string name="pref_equalizer_preset_title">Wybierz ustawienie</string>
+    <string name="pref_equalizer_loudness_title">Kompensacja głośności</string>
     <string name="pref_bassboost_title">Podbicie basu</string>
     <string name="pref_bassboost_summary_on">Podbicie basu jest włączone</string>
     <string name="pref_bassboost_summary_off">Podbicie basu jest wyłączone</string>
@@ -90,4 +95,5 @@
     <string name="pref_wm8994_adc_osr128_summary">128-krotne nadpróbkowanie przetwornika analogowo-cyfrowego - poprawia jakość nagrywania</string>
     <string name="pref_wm8994_fll_tuning_title">Regulacja zegara przetwornika</string>
     <string name="pref_wm8994_fll_tuning_summary">Użyj wyregulowanych źródeł zegara WM8994 - poprawia jakość dźwięku</string>
+    <string name="help_title">Pomoc</string>
 </resources>
